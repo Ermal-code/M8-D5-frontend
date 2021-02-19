@@ -3,6 +3,7 @@ import logo from "./assetss/spologo.png";
 import { Link, withRouter } from "react-router-dom";
 import { Col, InputGroup, FormControl } from "react-bootstrap";
 import { connect } from "react-redux";
+import axios from "axios";
 
 const mapStateToProps = (state) => state;
 
@@ -14,6 +15,28 @@ const mapDispatchToProps = (dispatch) => ({
 class SideBar extends React.Component {
   state = {
     searchString: this.props.searchStr,
+  };
+
+  logoutUser = async () => {
+    try {
+      const response = await axios(
+        `${process.env.REACT_APP_BE_URL}/users/logout`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      if (response.ok) {
+        console.log("ok");
+      } else {
+        console.log("bad");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   searchHandler = (e) => {
@@ -97,7 +120,7 @@ class SideBar extends React.Component {
                   class="btn login-btn btn-danger m-0"
                   type="button"
                   onClick={() => {
-                    this.props.setLoggedOut(false);
+                    this.logoutUser();
                     this.props.history.push("/");
                   }}
                 >
