@@ -1,22 +1,40 @@
 import React from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import logo from "./assetss/Spotify-Logo-Black.png";
-import { connect } from "react-redux";
+import axios from "axios";
+import createAuthRefresh from "axios-auth-refresh";
 import { Link } from "react-router-dom";
 
-const mapStateToProps = (state) => state;
-
-const mapDispatchToProps = (dispatch) => ({
-  setUserName: (username) =>
-    dispatch({ type: "SET_USER_NAME", payload: username }),
-  setPassword: (password) =>
-    dispatch({ type: "SET_PASSWORD", payload: password }),
-  setLoggedIn: (loggedIn) => dispatch({ type: "SET_LOGIN", payload: loggedIn }),
-});
 class Login extends React.Component {
   state = {
     username: "",
     password: "",
+  };
+
+  loginUser = async () => {
+    try {
+      const response = await axios(
+        `${process.env.REACT_APP_BE_URL}/users/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: {
+            email: this.state.username,
+            password: this.state.password,
+          },
+          withCredentials: true,
+        }
+      );
+      if (response.ok) {
+        console.log("ok");
+      } else {
+        console.log("bad");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   render() {
@@ -35,7 +53,7 @@ class Login extends React.Component {
             </div>
             <div className="row mb-2">
               <div className="col col-md-6 m-auto">
-                <a href={`${process.env.REACT_APP_BE_URL}/facebookLogin`}>
+                <a href={`${process.env.REACT_APP_BE_URL}/users/facebookLogin`}>
                   <button
                     type="button"
                     className="btn text-white   rounded-pill w-100"
@@ -50,14 +68,16 @@ class Login extends React.Component {
 
             <div className="row mb-2">
               <div className="col col-md-6 m-auto">
-                <button
-                  type="button"
-                  className="btn text-white  rounded-pill w-100"
-                  style={{ backgroundColor: "#000" }}
-                >
-                  <i className="fab fa-apple ml-2"></i> {"   "} CONTINUE WITH
-                  APPLE
-                </button>
+                <a href={`${process.env.REACT_APP_BE_URL}/users/spotifyLogin`}>
+                  <button
+                    type="button"
+                    className="btn text-white  rounded-pill w-100"
+                    style={{ backgroundColor: "#15883e" }}
+                  >
+                    <i className="fab fa-spotify ml-2"></i> {"   "} CONTINUE
+                    WITH SPOTIFY
+                  </button>
+                </a>
               </div>
             </div>
 
@@ -130,9 +150,7 @@ class Login extends React.Component {
                   className="btn loginButton text-white  w-100 rounded-pill mb-5"
                   style={{ backgroundColor: "#15883e" }}
                   onClick={() => {
-                    this.props.setUserName(this.state.username);
-                    this.props.setPassword(this.state.password);
-                    this.props.setLoggedIn(true);
+                    this.loginUser();
                     this.props.history.push("/home");
                   }}
                 >
@@ -169,4 +187,4 @@ class Login extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;
