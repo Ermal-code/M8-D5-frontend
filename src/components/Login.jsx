@@ -151,7 +151,6 @@ class Login extends React.Component {
                   style={{ backgroundColor: "#15883e" }}
                   onClick={() => {
                     this.loginUser();
-                    this.props.history.push("/home");
                   }}
                 >
                   LOG IN
